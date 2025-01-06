@@ -11,24 +11,24 @@ public class CapacitorGeofencing: CAPPlugin {
     @objc func setup(_ call: CAPPluginCall) {
         // Check if all properties are present
         guard let backendUrl = call.getString("url") else {
-            call.error("Must provide url.")
+            call.reject("Must provide url.")
             return
         }
-        guard let notifyOnEntry = call.getBool("notifyOnEntry", nil) else {
-            call.error("Must provide notifyOnEntry.")
+        guard let notifyOnEntry = call.getBool("notifyOnEntry") else {
+            call.reject("Must provide notifyOnEntry.")
             return
         }
-        guard let notifyOnExit = call.getBool("notifyOnExit", nil) else {
-            call.error("Must provide notifyOnExit.")
+        guard let notifyOnExit = call.getBool("notifyOnExit") else {
+            call.reject("Must provide notifyOnExit.")
             return
         }
         guard let payload = call.getObject("payload") else {
-            call.error("Must provide payload.")
+            call.reject("Must provide payload.")
             return
         }
         
         guard let url = URL(string: backendUrl) else {
-            call.error("Given url isn't valid.")
+            call.reject("Given url isn't valid.")
             return
         }
         
@@ -38,47 +38,47 @@ public class CapacitorGeofencing: CAPPlugin {
         GeofenceManager.shared.payload = payload
         GeofenceManager.shared.requestAlwaysAuthorization { (success) in
             if success {
-                call.success()
+                call.resolve()
             } else {
-                call.error("User did not give 'alwaysAuthorization' permission.")
+                call.reject("User did not give 'alwaysAuthorization' permission.")
             }
         }
     }
     
     @objc func addRegion(_ call: CAPPluginCall) {
         // Check if all properties are present
-        guard let lat = call.get("latitude", Double.self) else {
-            call.error("Must provide latitude.")
+        guard let lat = call.getDouble("latitude") else {
+            call.reject("Must provide latitude.")
             return
         }
-        guard let lng = call.get("longitude", Double.self) else {
-            call.error("Must provide longitude.")
+        guard let lng = call.getDouble("longitude") else {
+            call.reject("Must provide longitude.")
             return
         }
         guard let identifer = call.getString("identifier") else {
-            call.error("Must provide identifier.")
+            call.reject("Must provide identifier.")
             return
         }
-        let radius = call.get("radius", Double.self) ?? 50
+        let radius = call.getDouble("radius") ?? 50
         
         let region = GeofenceManager.shared.geofenceRegion(lat: lat, lng: lng, radius: radius, identifier: identifer)
         GeofenceManager.shared.startMonitoring(region: region)
-            ? call.success()
-            : call.error("Could not start monitoring the region.")
+            ? call.resolve()
+            : call.reject("Could not start monitoring the region.")
     }
     
     @objc func stopMonitoring(_ call: CAPPluginCall) {
         guard let identifier = call.getString("identifier") else {
-            call.error("Must provide identifier.")
+            call.reject("Must provide identifier.")
             return
         }
         GeofenceManager.shared.stopMonitoring(identifier: identifier)
-            ? call.success()
-            : call.error("Could not find a region with that identifer.")
+            ? call.resolve()
+            : call.reject("Could not find a region with that identifer.")
     }
     
     @objc func monitoredRegions(_ call: CAPPluginCall) {
-        call.success([
+        call.resolve([
             "regions": GeofenceManager.shared.monitoredRegions()
         ])
     }

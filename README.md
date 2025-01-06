@@ -1,7 +1,4 @@
 # Capacitor Geofencing
-
-[![npm version](https://badge.fury.io/js/capacitor-geofencing.svg)](https://badge.fury.io/js/capacitor-geofencing)
-
 This is a plugin for Capacitor that exposes native iOS geofencing capabilities to your capacitor app. 
 
 
