@@ -5,8 +5,25 @@ declare global {
 }
 
 export interface CapacitorGeofencingPlugin {
-  setup(options: { url: string, notifyOnEntry: boolean, notifyOnExit: boolean, payload: object }): Promise<{value: string}>;
-  addRegion(options: { latitude: number, longitude: number, radius?: number, identifier: string }): Promise<{value: string}>;
-  stopMonitoring(options: { identifier: string }): Promise<{value: string}>;
-  monitoredRegions(): Promise<{value: string}>;
+  setup(options: CapacitorGeofencingConfig): Promise<void>;
+  addRegion(options: CapacitorGeofencingRegion): Promise<void>;
+  stopMonitoring(options: CapacitorGeofencingIdentifier): Promise<void>;
+  monitoredRegions(): Promise<{regions:string[]}>;
+}
+
+export interface  CapacitorGeofencingConfig {
+  url: string;
+  notifyOnEntry: boolean;
+  notifyOnExit: boolean;
+  payload: object;
+}
+
+export interface  CapacitorGeofencingIdentifier {
+  identifier: string;
+}
+
+export interface  CapacitorGeofencingRegion extends CapacitorGeofencingIdentifier { 
+  latitude: number;
+  longitude: number;
+  radius?: number;
 }
